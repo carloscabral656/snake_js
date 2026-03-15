@@ -133,7 +133,6 @@ export default class Scenario {
 
   spawApple() {
     let position = this.generatePositionApple();
-    console.log(position.toString());
     this.apple.setPosition(position);
     this.renderApple();
   }
@@ -178,11 +177,7 @@ export default class Scenario {
   }
 
   createAvailableScenarioApple() {
-    console.log(this.struct[0]);
-    console.log(this.struct.includes([0, 0]));
     let availableScenario = this.struct.filter((s) => {
-      // Only if the bounderie is not in struct
-      // 's' is like this -> [0, 0]
       return !this.bounderies.some((b) => {
         return s[0] === b[0] && s[1] === b[1];
       });

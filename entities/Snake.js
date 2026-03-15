@@ -33,10 +33,6 @@ export default class Snake {
         }
     }
 
-    /*
-        This method verifys if the next moviment is equals to the second element in array.
-        It's usage is to verify if the next moviment is reverse.
-    */
     blockReverseMovement(nextMoviment){
         return (
             nextMoviment[0] === this.body[1][0] &&
@@ -44,10 +40,6 @@ export default class Snake {
         )
     }
 
-    /*
-        Verify if the next moviment is present in array.
-        This indicates that the collision ocurred.
-    */
     headHeatBody(head){
         return this.body.some((b, i, _) => {
             if(i !== 0){
@@ -63,24 +55,24 @@ export default class Snake {
         let head = this.head()
         let second = this.body[1]
         if(
-            head[0] === second[0] &&   // x == x
-            (head[1]+1) === second[1]  // y-1 == y
+            head[0] === second[0] &&
+            (head[1]+1) === second[1]
         ){
             
             return "up"
         } else if(
-            (head[0]+1) === second[0] &&   // x == x
-            head[1] === second[1]      // y-1 == y
+            (head[0]+1) === second[0] &&
+            head[1] === second[1]
         ) {
             return "left"
         } else if(
-            (head[0]-1) === second[0] &&   // x == x
-            head[1] === second[1]      // y-1 == y
+            (head[0]-1) === second[0] &&
+            head[1] === second[1]
         ) {
             return "right"
         } else if (
-            head[0] === second[0] &&   // x == x
-            (head[1]-1) === second[1]  // y-1 == y
+            head[0] === second[0] &&
+            (head[1]-1) === second[1]
         ){
             return "down"
         }
