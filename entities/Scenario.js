@@ -12,17 +12,31 @@ export default class Scenario {
     this.snake;
     this.apple = new Apple();
     this.callbacksListeners = (event) => this.handleKeys(event);
+    this.score = 0;
+    this.crawlInterval = null;
+  }
+
+  calculateCellSize() {
+    const availableHeight = this.window.innerHeight * 0.7;
+    const availableWidth = this.window.innerWidth * 0.7;
+    const cellSizeByHeight = Math.floor(availableHeight / this.height);
+    const cellSizeByWidth = Math.floor(availableWidth / this.width);
+    const size = Math.min(cellSizeByHeight, cellSizeByWidth);
+    return size > 0 ? size : 1;
   }
 
   constructScenarioStruct() {
     const qtColumns = this.width;
     const qtLines = this.height;
+    const cellSize = this.calculateCellSize();
     const scenario = document.createElement("table");
     for (let lines = 0; lines < qtLines; lines++) {
       let line = document.createElement("tr");
       for (let columns = 0; columns < qtColumns; columns++) {
         let column = document.createElement("td");
         column.setAttribute("id", `${columns},${lines}`);
+         column.style.width = `${cellSize}px`;
+         column.style.height = `${cellSize}px`;
         line.append(column);
         this.struct.push([columns, lines]);
       }
@@ -98,14 +112,18 @@ export default class Scenario {
     if (this.heatBound()) {
       this.snake.die();
     }
-    if (!this.snake.isAlive()) {
-      alert("Game Over!!");
-      this.window.location.reload();
-    }
+    this.checkGameOver();
   }
 
   setSnake(snake) {
     this.snake = snake;
+  }
+
+  updateScore() {
+    const scoreElement = this.window.document.getElementById("score");
+    if (scoreElement) {
+      scoreElement.textContent = `Score: ${this.score}`;
+    }
   }
 
   heatApple() {
@@ -116,6 +134,8 @@ export default class Scenario {
       this.cleanApple();
       this.snake.eat();
       this.renderSnake();
+      this.score++;
+      this.updateScore();
       this.spawApple();
     }
   }
@@ -129,6 +149,7 @@ export default class Scenario {
   spawSnake() {
     this.snake.init(this);
     this.renderSnake();
+    this.updateScore();
   }
 
   spawApple() {
@@ -144,8 +165,24 @@ export default class Scenario {
     apple.classList.add("apple");
   }
 
+  checkGameOver() {
+    if (!this.snake.isAlive()) {
+      if (this.crawlInterval !== null) {
+        this.window.clearInterval(this.crawlInterval);
+        this.crawlInterval = null;
+      }
+      this.window.document.removeEventListener(
+        "keydown",
+        this.callbacksListeners,
+        false
+      );
+      alert("Game Over!!");
+      this.window.location.reload();
+    }
+  }
+
   createCrawl() {
-    this.window.setInterval(() => {
+    this.crawlInterval = this.window.setInterval(() => {
       let d = this.snake.direction();
       if (d === "up") {
         this.cleanSnake();
@@ -169,10 +206,7 @@ export default class Scenario {
       if (this.heatBound()) {
         this.snake.die();
       }
-      if (!this.snake.isAlive()) {
-        alert("Game Over!!");
-        this.window.location.reload();
-      }
+      this.checkGameOver();
     }, 100);
   }
 
